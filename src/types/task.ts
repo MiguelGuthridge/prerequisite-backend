@@ -1,3 +1,4 @@
+import { ProjectId } from './project';
 
 export type TaskId = string & { __hidden: 'TaskId' };
 
@@ -6,5 +7,6 @@ export type Task = {
   name: string
   description: string
   complete: boolean
-  prerequisites: TaskId
+  prerequisites: TaskId[]
+  project: ProjectId
 }

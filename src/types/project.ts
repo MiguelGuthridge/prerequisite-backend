@@ -1,4 +1,4 @@
-import { UserId } from "./user";
+import { UserId } from './user';
 
 /** ID of a project */
 export type ProjectId = string & { __hidden: 'ProjectId' };

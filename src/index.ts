@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import errorHandler from 'middleware-http-errors';
 import debug from './routes/debug';
 import auth from './routes/auth';
+import projects from './routes/projects';
 
 dotenv.config();
 const port = parseInt(process.env.PORT as string);
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 
 app.use('/debug', debug);
 app.use('/auth', auth);
+app.use('/projects', projects);
 
 app.use(errorHandler());
 
