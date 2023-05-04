@@ -1,4 +1,4 @@
-import { DataStore } from './types';
+import { DataStore } from '../types';
 
 /**
  * Returns the default data

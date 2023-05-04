@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { defaultData, setData } from '../data';
+import { defaultData, setData } from '../data/data';
 
 const debug = Router();
 
