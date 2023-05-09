@@ -6,6 +6,7 @@ import { UserId } from '../types/user';
 import { body, validationResult } from 'express-validator';
 import { Request } from 'express-validator/src/base';
 import { v4 as uuid } from 'uuid';
+import { generateToken } from '../util/token';
 
 const auth = Router();
 
@@ -52,9 +53,10 @@ auth.post(
       username,
       displayName,
       password,
+      sessions: [],
     };
 
-    res.json({ id });
+    res.json({ id, token: generateToken(id) });
   }
 );
 
@@ -69,14 +71,14 @@ auth.post(
 
     const u = getUserByUsername(username);
     if (u === null) {
-      throw HttpError(400, 'Username does not exist');
+      throw HttpError(400, 'Username not found');
     }
 
     if (u.password !== password) {
       throw HttpError(400, 'Password is incorrect');
     }
 
-    res.json({ id: u.id });
+    res.json({ id: u.id, token: generateToken(u.id) });
   });
 
 export default auth;
