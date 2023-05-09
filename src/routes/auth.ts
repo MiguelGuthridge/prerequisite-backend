@@ -58,7 +58,7 @@ auth.post(
   }
 );
 
-auth.get(
+auth.post(
   '/login',
   [
     body('username').exists(),
