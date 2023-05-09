@@ -1,48 +1,82 @@
-import { Router } from 'express';
+import { Response, Router } from 'express';
 import { getData } from '../data/data';
 import { getUserByUsername } from '../data/users';
 import HttpError from 'http-errors';
 import { UserId } from '../types/user';
+import { body, validationResult } from 'express-validator';
+import { Request } from 'express-validator/src/base';
+import { v4 as uuid } from 'uuid';
 
 const auth = Router();
 
-auth.post('/register', (req, res) => {
-  const {
-    username,
-    displayName,
-    password,
-  }: { username: string, displayName: string, password: string } = req.body;
+auth.post(
+  '/register',
+  [
+    body('username')
+      .exists()
+      .escape()
+      .isAlphanumeric()
+      .isLowercase()
+      .custom(async username => {
+        const u = getUserByUsername(username);
+        if (u !== null) {
+          throw new Error('Username already exists');
+        }
+      }),
+    body('displayName')
+      .exists()
+      .escape()
+      .isString(),
+    body('password')
+      .exists()
+      .isStrongPassword(),
+  ],
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
 
-  if (getUserByUsername(username)) {
-    throw HttpError(400, 'Username already exists');
+    if (!errors.isEmpty()) {
+      res.status(400).json({ error: errors.array() });
+    }
+
+    const {
+      username,
+      displayName,
+      password,
+    }: { username: string, displayName: string, password: string } = req.body;
+
+    // Generate user ID
+    const id = uuid() as UserId;
+
+    getData().users[id] = {
+      id,
+      username,
+      displayName,
+      password,
+    };
+
+    res.json({ id });
   }
+);
 
-  // Generate user ID
-  const id = '1' as UserId; // FIXME
+auth.get(
+  '/login',
+  [
+    body('username').exists(),
+    body('password').exists(),
+  ],
+  (req: Request, res: Response) => {
+    const { username, password }: { username: string, password: string } = req.body;
 
-  getData().users[id] = {
-    id,
-    username,
-    displayName,
-    password,
-  };
+    const u = getUserByUsername(username);
+    if (u === null) {
+      throw HttpError(400, 'Username does not exist');
+    }
 
-  res.json({ id });
-});
+    if (u.password !== password) {
+      throw HttpError(400, 'Password is incorrect');
+    }
 
-auth.get('/login', (req, res) => {
-  const { username, password }: { username: string, password: string } = req.body;
-
-  const u = getUserByUsername(username);
-  if (u === null) {
-    throw HttpError(400, 'Username does not exist');
-  }
-
-  if (u.password !== password) {
-    throw HttpError(400, 'Password is incorrect');
-  }
-
-  res.json({ id: u.id });
-});
+    res.json({ id: u.id });
+  });
 
 export default auth;

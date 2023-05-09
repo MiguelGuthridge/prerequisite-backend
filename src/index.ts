@@ -8,6 +8,7 @@ import auth from './routes/auth';
 import projects from './routes/projects';
 
 dotenv.config();
+
 const port = parseInt(process.env.PORT as string);
 const ip = process.env.IP as string;
 
