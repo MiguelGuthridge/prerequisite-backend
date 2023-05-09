@@ -11,7 +11,7 @@ debug.delete('/clear', (req, res) => {
 debug.get('/echo', (req, res) => {
   const { value } = req.query;
   console.log(`[ ECHO ] ${value}`);
-  res.json({});
+  res.json({ value });
 });
 
 export default debug;

@@ -7,3 +7,5 @@ export type DataStore = {
   projects: Record<ProjectId, Project>
   tasks: Record<TaskId, Task>
 }
+
+export type HttpVerb = 'GET' | 'POST' | 'PUT' | 'DELETE';
