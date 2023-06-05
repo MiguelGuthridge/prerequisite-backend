@@ -76,7 +76,7 @@ export async function apiFetch (
 
   if ([400, 403].includes(res.status)) {
     // All 400 and 403 errors have an error message according to the spec
-    const errorMessage = (json as { error: string }).error;
+    const errorMessage = (json as { error: string | object }).error;
     throw new ApiError(res.status, errorMessage);
   }
   if (![200, 304].includes(res.status)) {
