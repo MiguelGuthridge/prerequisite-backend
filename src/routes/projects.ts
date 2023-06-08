@@ -5,7 +5,7 @@ import HttpError from 'http-errors';
 import { UserId } from '../types/user';
 import { ProjectId } from '../types/project';
 import { v4 as uuid } from 'uuid';
-import { getProjectById, getVisibleProjects, isProjectVisibleToUser } from '../data/projects';
+import { deleteProject, getProjectById, getVisibleProjects, isProjectVisibleToUser } from '../data/projects';
 import { getUserIdFromRequest as userFromToken } from '../util/token';
 
 const projects = Router();
@@ -54,6 +54,47 @@ projects.get('/:projectId', (req, res) => {
   }
 
   res.json(project);
+});
+
+projects.put('/:projectId', (req, res) => {
+  const id = userFromToken(req);
+  const projectId = req.params.projectId as ProjectId;
+
+  const project = getProjectById(projectId);
+
+  if (project === null) {
+    throw HttpError(400, 'Project does not exist');
+  }
+
+  if (!isProjectVisibleToUser(id, projectId)) {
+    throw HttpError(403, 'Unable to view project');
+  }
+
+  const { name, description } = req.body as { name: string, description: string };
+
+  project.name = name;
+  project.description = description;
+
+  res.json({});
+});
+
+projects.delete('/:projectId', (req, res) => {
+  const id = userFromToken(req);
+  const projectId = req.params.projectId as ProjectId;
+
+  const project = getProjectById(projectId);
+
+  if (project === null) {
+    throw HttpError(400, 'Project does not exist');
+  }
+
+  if (!isProjectVisibleToUser(id, projectId)) {
+    throw HttpError(403, 'Unable to view project');
+  }
+
+  deleteProject(projectId);
+
+  res.json({});
 });
 
 export default projects;

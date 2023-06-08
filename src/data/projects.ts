@@ -20,3 +20,7 @@ export const getVisibleProjects = (id: UserId): Project[] => {
   }
   return results;
 };
+
+export const deleteProject = (id: ProjectId) => {
+  delete getData().projects[id];
+};
