@@ -7,6 +7,7 @@ import errorHandler from 'middleware-http-errors';
 import debug from './routes/debug';
 import auth from './routes/auth';
 import projects from './routes/projects';
+import { getAccessTokenSecret, isTokenRevoked } from './util/token';
 
 dotenv.config();
 
@@ -17,8 +18,10 @@ app.use(morgan('dev'));
 
 app.use(
   jwt({
-    secret: process.env.ACCESS_TOKEN_SECRET as string,
+    secret: getAccessTokenSecret,
     algorithms: ['HS256'],
+    isRevoked: isTokenRevoked,
+    // TODO: Specify issuer and audience?
   }).unless({
     path: [
       '/',
@@ -33,7 +36,9 @@ app.get('/', (req, res) => {
   res.send('Prerequisite backend is up and running!');
 });
 
+// TODO: Use environment variable to enable debug routes
 app.use('/debug', debug);
+
 app.use('/auth', auth);
 app.use('/projects', projects);
 
