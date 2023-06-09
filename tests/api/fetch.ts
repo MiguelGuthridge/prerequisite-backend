@@ -85,5 +85,5 @@ export async function apiFetch (
   }
 
   // Got valid data
-  return json;
+  return Object.assign({}, json);
 }

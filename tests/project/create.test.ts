@@ -7,7 +7,12 @@ beforeEach(api.debug.clear);
 describe('/project POST', () => {
   it('allows users to create projects', async () => {
     const { token } = await makeUser();
-    await api.project.create(token, 'My project', 'A test project');
+    const result = await api.project.create(
+      token,
+      'My project',
+      'A test project',
+    );
+    expect(result).toStrictEqual({ id: expect.any(String) });
   });
 
   it("doesn't allow users with invalid tokens to create projects", async () => {

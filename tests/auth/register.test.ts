@@ -4,9 +4,12 @@ beforeEach(api.debug.clear);
 
 describe('/auth/register', () => {
   it('allows users to register', async () => {
-    const { id, token } = await api.auth.register('myusername', 'Display Name', 'abc123ABC!');
-    expect(id).toBeDefined();
-    expect(token).toBeDefined();
+    const result = await api.auth.register('myusername', 'Display Name', 'abc123ABC!');
+
+    expect(result).toStrictEqual({
+      id: expect.any(String),
+      token: expect.any(String),
+    });
   });
 
   describe('error cases', () => {
