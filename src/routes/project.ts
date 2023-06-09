@@ -2,20 +2,20 @@ import { Router } from 'express';
 import { getData } from '../data/data';
 import { getUserById } from '../data/users';
 import HttpError from 'http-errors';
-import { UserId } from '../types/user';
 import { ProjectId } from '../types/project';
 import { v4 as uuid } from 'uuid';
 import { deleteProject, getProjectById, getVisibleProjects, isProjectVisibleToUser } from '../data/projects';
-import { getUserIdFromRequest as userFromToken } from '../util/token';
+import { getUserIdFromRequest, getUserIdFromRequest as userFromToken } from '../util/token';
 
 const project = Router();
 
 project.post('/', (req, res) => {
+  const owner = getUserIdFromRequest(req);
+
   const {
     name,
     description,
-    id: owner,
-  }: { name: string, description: string, id: UserId } = req.body;
+  }: { name: string, description: string } = req.body;
 
   if (!getUserById(owner)) {
     throw HttpError(400, 'Bad user id');
@@ -66,8 +66,8 @@ project.put('/:projectId', (req, res) => {
     throw HttpError(400, 'Project does not exist');
   }
 
-  if (!isProjectVisibleToUser(id, projectId)) {
-    throw HttpError(403, 'Unable to view project');
+  if (project.owner !== id) {
+    throw HttpError(403, "You're not the owner of the project");
   }
 
   const { name, description } = req.body as { name: string, description: string };
@@ -88,8 +88,8 @@ project.delete('/:projectId', (req, res) => {
     throw HttpError(400, 'Project does not exist');
   }
 
-  if (!isProjectVisibleToUser(id, projectId)) {
-    throw HttpError(403, 'Unable to view project');
+  if (project.owner !== id) {
+    throw HttpError(403, "You're not the owner of the project");
   }
 
   deleteProject(projectId);
