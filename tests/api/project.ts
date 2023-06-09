@@ -48,7 +48,7 @@ export const editDetails = async (
   );
 };
 
-export const deleteProject = async (
+export const remove = async (
   token: Token,
   id: ProjectId,
 ) => {
@@ -57,4 +57,12 @@ export const deleteProject = async (
     `/project/${id}`,
     token,
   );
+};
+
+export default {
+  list,
+  create,
+  details,
+  editDetails,
+  remove,
 };

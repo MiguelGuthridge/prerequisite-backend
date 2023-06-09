@@ -1,38 +1,54 @@
-import { Router } from 'express';
+import { Response, Router } from 'express';
 import { getData } from '../data/data';
-import { getUserById } from '../data/users';
 import HttpError from 'http-errors';
 import { ProjectId } from '../types/project';
 import { v4 as uuid } from 'uuid';
 import { deleteProject, getProjectById, getVisibleProjects, isProjectVisibleToUser } from '../data/projects';
 import { getUserIdFromRequest, getUserIdFromRequest as userFromToken } from '../util/token';
+import { body, validationResult } from 'express-validator';
+import { Request } from 'express-jwt';
 
 const project = Router();
 
-project.post('/', (req, res) => {
-  const owner = getUserIdFromRequest(req);
+project.post(
+  '/',
+  [
+    body('name')
+      .exists()
+      .escape()
+      .trim()
+      .notEmpty(),
+    body('description')
+      .exists()
+      .escape()
+      .trim()
+  ],
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() });
+    }
 
-  const {
-    name,
-    description,
-  }: { name: string, description: string } = req.body;
+    const owner = getUserIdFromRequest(req);
 
-  if (!getUserById(owner)) {
-    throw HttpError(400, 'Bad user id');
+    const {
+      name,
+      description,
+    }: { name: string, description: string } = req.body;
+
+    // Generate project ID
+    const id = uuid() as ProjectId;
+
+    getData().projects[id] = {
+      id,
+      name,
+      description,
+      owner,
+    };
+
+    res.json({ id });
   }
-
-  // Generate project ID
-  const id = uuid() as ProjectId;
-
-  getData().projects[id] = {
-    id,
-    name,
-    description,
-    owner,
-  };
-
-  res.json({ id });
-});
+);
 
 project.get('/', (req, res) => {
   const id = userFromToken(req);
