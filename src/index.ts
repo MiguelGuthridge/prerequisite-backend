@@ -6,5 +6,5 @@ const ip = process.env.IP as string;
 server.listen(
   port,
   ip,
-  () => console.log(`Prerequisite backend running on http://${ip}:${port}/`)
+  () => console.log(`Waydriver backend running on http://${ip}:${port}/`)
 );

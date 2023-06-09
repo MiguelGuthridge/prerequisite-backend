@@ -8,9 +8,9 @@ import { v4 as uuid } from 'uuid';
 import { deleteProject, getProjectById, getVisibleProjects, isProjectVisibleToUser } from '../data/projects';
 import { getUserIdFromRequest as userFromToken } from '../util/token';
 
-const projects = Router();
+const project = Router();
 
-projects.post('/', (req, res) => {
+project.post('/', (req, res) => {
   const {
     name,
     description,
@@ -34,12 +34,12 @@ projects.post('/', (req, res) => {
   res.json({ id });
 });
 
-projects.get('/', (req, res) => {
+project.get('/', (req, res) => {
   const id = userFromToken(req);
   res.json({ projects: getVisibleProjects(id) });
 });
 
-projects.get('/:projectId', (req, res) => {
+project.get('/:projectId', (req, res) => {
   const id = userFromToken(req);
   const projectId = req.params.projectId as ProjectId;
 
@@ -56,7 +56,7 @@ projects.get('/:projectId', (req, res) => {
   res.json(project);
 });
 
-projects.put('/:projectId', (req, res) => {
+project.put('/:projectId', (req, res) => {
   const id = userFromToken(req);
   const projectId = req.params.projectId as ProjectId;
 
@@ -78,7 +78,7 @@ projects.put('/:projectId', (req, res) => {
   res.json({});
 });
 
-projects.delete('/:projectId', (req, res) => {
+project.delete('/:projectId', (req, res) => {
   const id = userFromToken(req);
   const projectId = req.params.projectId as ProjectId;
 
@@ -97,4 +97,4 @@ projects.delete('/:projectId', (req, res) => {
   res.json({});
 });
 
-export default projects;
+export default project;

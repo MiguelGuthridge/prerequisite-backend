@@ -6,7 +6,7 @@ import { expressjwt as jwt } from 'express-jwt';
 import errorHandler from 'middleware-http-errors';
 import debug from './routes/debug';
 import auth from './routes/auth';
-import projects from './routes/projects';
+import project from './routes/project';
 import { getAccessTokenSecret, isTokenRevoked } from './util/token';
 
 dotenv.config();
@@ -21,7 +21,7 @@ app.use(
     secret: getAccessTokenSecret,
     algorithms: ['HS256'],
     isRevoked: isTokenRevoked,
-    // TODO: Specify issuer and audience?
+    // TODO: Specify issuer and audience for security improvements
   }).unless({
     path: [
       '/',
@@ -33,14 +33,14 @@ app.use(
 );
 
 app.get('/', (req, res) => {
-  res.send('Prerequisite backend is up and running!');
+  res.send('Waydriver backend is up and running!');
 });
 
 // TODO: Use environment variable to enable debug routes
 app.use('/debug', debug);
 
 app.use('/auth', auth);
-app.use('/projects', projects);
+app.use('/project', project);
 
 app.use(errorHandler());
 
