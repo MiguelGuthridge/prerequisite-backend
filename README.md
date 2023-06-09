@@ -18,6 +18,9 @@ These are the things I'm hoping to tackle, probably in this order.
 * [ ] Basic frontend
 * [ ] Path-finding algorithm
 * [ ] Task completion interface in frontend
+* [ ] Task dimensions (eg, estimated time, priority, number of spoons, maybe
+      custom dimensions as well)
+* [ ] Path-finding algorithm that lets users prioritise dimensions
 
 I'm not sure where I'll go from there - this project is primarily designed to
 match my own needs for a task management system, so after I've got the basic
