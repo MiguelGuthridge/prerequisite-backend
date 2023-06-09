@@ -105,5 +105,9 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+  },
+  // Enable jest-extended
+  "files": ["node_modules/jest-extended/types/index.d.ts"],
+  "include": [ "src/**/*", "tests/**/*"],
+  "exclude": ["node_modules"]
 }
