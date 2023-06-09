@@ -34,7 +34,7 @@ export const details = async (
   ) as Promise<Project>;
 };
 
-export const editDetails = async (
+export const edit = async (
   token: Token,
   id: ProjectId,
   name: string,
@@ -63,6 +63,6 @@ export default {
   list,
   create,
   details,
-  editDetails,
+  edit,
   remove,
 };
