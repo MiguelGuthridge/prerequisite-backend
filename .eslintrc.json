@@ -64,7 +64,7 @@
         "objects": "only-multiline",
         "imports": "only-multiline",
         "exports": "only-multiline",
-        "functions": "never"
+        "functions": "only-multiline"
       }],
       "comma-spacing": ["error", { "before": false, "after": true }],
       "comma-style": ["error", "last"],
