@@ -12,9 +12,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PORT: 3000
+      IP: localhost
+      ACCESS_TOKEN_SECRET: "Not really a secret it's just CI"
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
@@ -22,16 +26,17 @@ jobs:
     - run: npm ci
     # Start the server, runs tests, then kill the background job (hopefully)
     # At the very least, it'll die once the workflow ends
-    - run: npm run dev & (sleep 3 && npm test && (jobs -p | xargs -I{} kill -- -{}))
+    - name: npm test
+      run: npm run dev & (sleep 3 && npm test && (jobs -p | xargs -I{} kill -- -{}))
 
   lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18.x
         cache: 'npm'
     - run: npm ci
     - run: npm run lint
@@ -40,10 +45,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18.x
         cache: 'npm'
     - run: npm ci
     - run: npm run tsc
