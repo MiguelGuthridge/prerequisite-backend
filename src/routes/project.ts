@@ -73,6 +73,7 @@ project.get('/:projectId', (req, res) => {
   res.json(project);
 });
 
+// FIXME: Validate body
 project.put('/:projectId', (req, res) => {
   const id = userFromToken(req);
   const projectId = req.params.projectId as ProjectId;

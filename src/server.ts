@@ -8,6 +8,7 @@ import debug from './routes/debug';
 import auth from './routes/auth';
 import project from './routes/project';
 import { getAccessTokenSecret, isTokenRevoked } from './util/token';
+import task from './routes/task';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use('/debug', debug);
 
 app.use('/auth', auth);
 app.use('/project', project);
+app.use('/task', task);
 
 app.use(errorHandler());
 
