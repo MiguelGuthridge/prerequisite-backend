@@ -73,28 +73,46 @@ project.get('/:projectId', (req, res) => {
   res.json(project);
 });
 
-// FIXME: Validate body
-project.put('/:projectId', (req, res) => {
-  const id = userFromToken(req);
-  const projectId = req.params.projectId as ProjectId;
+project.put(
+  '/:projectId',
+  [
+    body('name')
+      .exists()
+      .escape()
+      .trim()
+      .notEmpty(),
+    body('description')
+      .exists()
+      .escape()
+      .trim()
+  ],
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() });
+    }
 
-  const project = getProjectById(projectId);
+    const id = userFromToken(req);
+    const projectId = req.params.projectId as ProjectId;
 
-  if (project === null) {
-    throw HttpError(400, 'Project does not exist');
+    const project = getProjectById(projectId);
+
+    if (project === null) {
+      throw HttpError(400, 'Project does not exist');
+    }
+
+    if (project.owner !== id) {
+      throw HttpError(403, "You're not the owner of the project");
+    }
+
+    const { name, description } = req.body as { name: string, description: string };
+
+    project.name = name;
+    project.description = description;
+
+    res.json({});
   }
-
-  if (project.owner !== id) {
-    throw HttpError(403, "You're not the owner of the project");
-  }
-
-  const { name, description } = req.body as { name: string, description: string };
-
-  project.name = name;
-  project.description = description;
-
-  res.json({});
-});
+);
 
 project.delete('/:projectId', (req, res) => {
   const id = userFromToken(req);

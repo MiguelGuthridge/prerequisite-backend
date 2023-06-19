@@ -52,5 +52,14 @@ describe('/project edit', () => {
     ).rejects.toMatchObject({ code: 401 });
   });
 
-  it.todo('fails when setting project name to be empty');
+  it('fails when setting project name to be empty or whitespace', async () => {
+    const { token } = await makeUser();
+    const { id: projectId } = await makeProject(token);
+    await expect(
+      api.project.edit(token, projectId, '', 'Description')
+    ).rejects.toMatchObject({ code: 400 });
+    await expect(
+      api.project.edit(token, projectId, ' \t\n', 'Description')
+    ).rejects.toMatchObject({ code: 400 });
+  });
 });
