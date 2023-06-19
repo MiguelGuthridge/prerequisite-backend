@@ -23,5 +23,7 @@ describe('/task delete', () => {
     describe('trim', () => {
       it.todo('removes task as a prerequisite for all direct dependents');
     });
+
+    it.todo('fails for non-existent strategies');
   });
 });

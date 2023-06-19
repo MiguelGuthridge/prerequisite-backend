@@ -8,13 +8,16 @@ import { getUserIdFromRequest } from '../util/token';
 import { body, validationResult } from 'express-validator';
 import { Request } from 'express-jwt';
 import { deleteTask, getTaskById } from '../data/tasks';
-import { TaskId } from '../types/task';
+import { TaskDeletionStrategy, TaskId } from '../types/task';
 
 const task = Router();
 
 task.post(
   '/',
   [
+    body('project')
+      .exists()
+      .isUUID(),
     body('name')
       .exists()
       .escape()
@@ -31,9 +34,6 @@ task.post(
       .isArray(),
     body('prerequisites.*')
       .isUUID(),
-    body('project')
-      .exists()
-      .isUUID(),
   ],
   (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -44,17 +44,17 @@ task.post(
     const owner = getUserIdFromRequest(req);
 
     const {
+      project,
       name,
       description,
       complete,
       prerequisites,
-      project,
     }: {
+      project: ProjectId,
       name: string,
       description: string,
       complete: boolean,
       prerequisites: TaskId[],
-      project: ProjectId,
     } = req.body;
 
     // Validate project
@@ -165,6 +165,7 @@ task.put('/:taskId', (req, res) => {
 task.delete('/:taskId', (req, res) => {
   const owner = getUserIdFromRequest(req);
   const taskId = req.params.taskId as TaskId;
+  const strategy = req.query.strategy as TaskDeletionStrategy;
 
   const task = getTaskById(taskId);
 

@@ -11,7 +11,7 @@ export type Task = {
   project: ProjectId
 }
 
-export enum TaskDeletetionStrategy {
+export enum TaskDeletionStrategy {
   /**
    * Tasks that depend on this task are also deleted
    */
