@@ -1,5 +1,5 @@
 {
-
+    "root": true,
     "ignorePatterns": [],
     "parser": "@typescript-eslint/parser",
     "plugins": [
@@ -15,7 +15,8 @@
       "ecmaFeatures": {
         "jsx": true
       },
-      "sourceType": "module"
+      "sourceType": "module",
+      "project": "./tsconfig.json"
     },
     "env": {
       "es2021": true,
@@ -34,6 +35,8 @@
         "ignoreRestSiblings": true,
         "vars": "all"
       }],
+
+      "@typescript-eslint/no-floating-promises": "error",
 
       // Everything below here is standard 1531
 
