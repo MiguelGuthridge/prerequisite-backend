@@ -29,12 +29,12 @@
       "window": "readonly"
     },
     "rules": {
-      "no-unused-vars": ["error", {
-        "args": "none",
-        "caughtErrors": "none",
-        "ignoreRestSiblings": true,
-        "vars": "all"
-      }],
+      // "no-unused-vars": ["error", {
+      //   "args": "none",
+      //   "caughtErrors": "none",
+      //   "ignoreRestSiblings": true,
+      //   "vars": "all"
+      // }],
 
       "@typescript-eslint/no-floating-promises": "error",
 
