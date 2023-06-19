@@ -2,7 +2,7 @@ import api from '../api';
 
 beforeEach(api.debug.clear);
 
-describe('/task delete', () => {
+describe('/task remove', () => {
   it.todo('deletes tasks');
 
   it.todo('fails for invalid task ids');
