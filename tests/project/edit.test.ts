@@ -51,4 +51,6 @@ describe('/project edit', () => {
       api.project.edit('bad' as Token, projectId, 'Bad', 'Token')
     ).rejects.toMatchObject({ code: 401 });
   });
+
+  it.todo('fails when setting project name to be empty');
 });
