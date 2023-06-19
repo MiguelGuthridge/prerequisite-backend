@@ -43,7 +43,7 @@ describe('/project list', () => {
   });
 
   it('errors on invalid token', async () => {
-    expect(
+    await expect(
       api.project.list('bad' as Token)
     ).rejects.toMatchObject({ code: 401 });
   });
