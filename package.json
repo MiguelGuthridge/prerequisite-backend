@@ -42,6 +42,7 @@
     "typescript": "^5.0.4"
   },
   "jest": {
-    "setupFilesAfterEnv": ["jest-extended/all"]
+    "setupFilesAfterEnv": ["jest-extended/all"],
+    "maxWorkers": 1
   }
 }
