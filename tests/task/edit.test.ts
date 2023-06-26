@@ -12,4 +12,6 @@ describe('/task edit', () => {
   it.todo('fails for invalid task IDs');
 
   it.todo('fails when setting task name to be empty');
+
+  it.todo("doesn't allow circular dependencies of tasks");
 });
