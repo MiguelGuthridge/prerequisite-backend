@@ -10,6 +10,10 @@ export const deleteTask = (id: TaskId) => {
   delete getData().tasks[id];
 };
 
+/**
+ * Recursively expand a prerequisite to give a list of all prerequisite tasks
+ * given this task is a prerequisite (includes original task ID)
+ */
 export const expandTaskPrerequisite = (id: TaskId): TaskId[] => {
   const prerequisites = [id];
 
@@ -21,4 +25,19 @@ export const expandTaskPrerequisite = (id: TaskId): TaskId[] => {
   }
 
   return prerequisites;
+};
+
+/**
+ * Returns tasks that are direct successors of the task with the given ID.
+ *
+ * A successor is a task that has this task as one of its prerequisites.
+ */
+export const findDirectSuccessorTasks = (id: TaskId): TaskId[] => {
+  const successors = [];
+  for (const task of Object.values(getData().tasks)) {
+    if (task.prerequisites.includes(id)) {
+      successors.push(task.id);
+    }
+  }
+  return successors;
 };

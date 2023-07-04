@@ -7,8 +7,8 @@ import { getProjectById, isProjectVisibleToUser } from '../data/projects';
 import { getUserIdFromRequest } from '../util/token';
 import { body, validationResult } from 'express-validator';
 import { Request } from 'express-jwt';
-import { deleteTask, expandTaskPrerequisite, getTaskById } from '../data/tasks';
-import { TaskDeletionStrategy, TaskId } from '../types/task';
+import { deleteTask, expandTaskPrerequisite, findDirectSuccessorTasks, getTaskById } from '../data/tasks';
+import { Task, TaskDeletionStrategy, TaskId } from '../types/task';
 
 const task = Router();
 
@@ -183,13 +183,29 @@ task.post(
       throw HttpError(400, 'Task does not exist');
     }
 
-    const project = getProjectById(task.project) as Project;
-
     if (!isProjectVisibleToUser(owner, task.project)) {
       throw HttpError(403, 'Unable to view project');
     }
 
     const { complete } = req.body as { complete: boolean };
+
+    if (complete) {
+      // Don't allow task completion if any prerequisites have not been completed
+      for (const prereqId of task.prerequisites) {
+        const prereq = getTaskById(prereqId) as Task;
+        if (!prereq.complete) {
+          throw HttpError(400, 'Cannot complete tasks with incomplete prerequisites');
+        }
+      }
+    } else {
+      // Don't allow task un-completion if any successors have been completed
+      for (const successorId of findDirectSuccessorTasks(taskId)) {
+        const successor = getTaskById(successorId) as Task;
+        if (successor.complete) {
+          throw HttpError(400, 'Cannot un-complete tasks with complete successors');
+        }
+      }
+    }
 
     task.complete = complete;
 
