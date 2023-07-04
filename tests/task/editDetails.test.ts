@@ -12,17 +12,15 @@ describe('/task edit', () => {
     const { id: taskId } = await makeTask(token, projectId);
 
     await expect(
-      api.task.edit(token, taskId, 'new name', 'new description', true, [])
+      api.task.edit(token, taskId, 'new name', 'new description')
     ).resolves.toStrictEqual(
       {}
     );
 
-    await expect(api.task.details(token, taskId)).resolves.toStrictEqual({
+    await expect(api.task.details(token, taskId)).resolves.toMatchObject({
       id: taskId,
       name: 'new name',
       description: 'new description',
-      complete: true,
-      prerequisites: [],
       project: projectId,
     });
   });
@@ -34,7 +32,7 @@ describe('/task edit', () => {
 
     const { token: token2 } = await makeUser(2);
     await expect(
-      api.task.edit(token2, taskId, 'hi', '', true, [])
+      api.task.edit(token2, taskId, 'hi', '')
     ).rejects.toMatchObject(
       { code: 403 }
     );
@@ -46,7 +44,7 @@ describe('/task edit', () => {
     const { id: taskId } = await makeTask(token, projectId);
 
     await expect(
-      api.task.edit('bad' as Token, taskId, 'hi', '', true, [])
+      api.task.edit('bad' as Token, taskId, 'hi', '')
     ).rejects.toMatchObject(
       { code: 401 }
     );
@@ -55,7 +53,7 @@ describe('/task edit', () => {
   it('fails for invalid task IDs', async () => {
     const { token } = await makeUser();
     await expect(
-      api.task.edit(token, 'bad' as TaskId, 'hi', '', true, [])
+      api.task.edit(token, 'bad' as TaskId, 'hi', '')
     ).rejects.toMatchObject(
       { code: 400 }
     );
@@ -67,46 +65,9 @@ describe('/task edit', () => {
     const { id: taskId } = await makeTask(token, projectId);
 
     await expect(
-      api.task.edit(token, taskId, '', 'new description', true, [])
+      api.task.edit(token, taskId, '', 'new description')
     ).rejects.toMatchObject(
       { code: 400 }
     );
-  });
-
-  describe('prerequisites', () => {
-    it("doesn't allow circular dependencies of tasks", async () => {
-      const { token } = await makeUser();
-      const { id: projectId } = await makeProject(token);
-      const { id: taskId1 } = await makeTask(token, projectId);
-      const { id: taskId2 } = await makeTask(
-        token,
-        projectId,
-        { num: 2, prerequisites: [taskId1] },
-      );
-
-      // Can't make second a dependency of first
-      await expect(api.task.edit(
-        token,
-        taskId1,
-        'my task',
-        '',
-        false,
-        []
-      )).rejects.toMatchObject(
-        { code: 400 }
-      );
-    });
-
-    it('allows prerequisites to be defined', async () => {
-      // todo
-    });
-
-    it('fails for invalid task IDs in prerequisites', async () => {
-      // todo
-    });
-
-    it('fails for task IDs outside of the project', async () => {
-      // todo
-    });
   });
 });
