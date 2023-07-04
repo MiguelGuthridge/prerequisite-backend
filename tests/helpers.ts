@@ -1,4 +1,5 @@
 import { ProjectId } from '../src/types/project';
+import { TaskId } from '../src/types/task';
 import { Token } from '../src/types/user';
 import api from './api';
 
@@ -20,13 +21,25 @@ export const makeProject = async (token: Token, num?: number | undefined) => {
   );
 };
 
+type MakeTaskOptions = {
+  num?: number | undefined
+  prerequisites?: TaskId[] | undefined
+}
+
 export const makeTask = async (
   token: Token,
   project: ProjectId,
-  num?: number | undefined,
+  options?: MakeTaskOptions | undefined,
 ) => {
+  if (options === undefined) {
+    options = {};
+  }
+  let { num, prerequisites } = options;
   if (num === undefined) {
     num = 1;
+  }
+  if (prerequisites === undefined) {
+    prerequisites = [];
   }
   return api.task.create(
     token,
@@ -34,6 +47,6 @@ export const makeTask = async (
     `Task ${num}`,
     `This is task number ${num}`,
     false,
-    [],
+    prerequisites,
   );
 };
