@@ -56,14 +56,14 @@ export const complete = async (
   complete: boolean,
 ) => {
   return apiFetch(
-    'PUT',
+    'POST',
     `/task/${id}/complete`,
     token,
     { complete },
   );
 };
 
-export const editPrerequisites = async (
+export const prerequisites = async (
   token: Token,
   id: TaskId,
   prerequisites: TaskId[],
@@ -93,5 +93,7 @@ export default {
   create,
   details,
   edit,
+  prerequisites,
+  complete,
   remove,
 };
