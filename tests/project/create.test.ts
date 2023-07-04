@@ -13,6 +13,7 @@ describe('/project POST', () => {
       'A test project',
     );
     expect(result).toStrictEqual({ id: expect.any(String) });
+    await expect(api.project.details(token, result.id)).toResolve();
   });
 
   it("doesn't allow users with invalid tokens to create projects", async () => {

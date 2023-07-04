@@ -10,6 +10,8 @@ describe('/auth/register', () => {
       id: expect.any(String),
       token: expect.any(String),
     });
+
+    // TODO: Check user details when profile routes are implemented
   });
 
   describe('error cases', () => {
