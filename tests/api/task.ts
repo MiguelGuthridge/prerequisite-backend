@@ -41,14 +41,38 @@ export const edit = async (
   id: TaskId,
   name: string,
   description: string,
-  complete: boolean,
-  prerequisites: TaskId[],
 ) => {
   return apiFetch(
     'PUT',
     `/task/${id}`,
     token,
-    { name, description, complete, prerequisites },
+    { name, description },
+  );
+};
+
+export const complete = async (
+  token: Token,
+  id: TaskId,
+  complete: boolean,
+) => {
+  return apiFetch(
+    'PUT',
+    `/task/${id}/complete`,
+    token,
+    { complete },
+  );
+};
+
+export const editPrerequisites = async (
+  token: Token,
+  id: TaskId,
+  prerequisites: TaskId[],
+) => {
+  return apiFetch(
+    'PUT',
+    `/task/${id}/prerequisites`,
+    token,
+    { prerequisites },
   );
 };
 
