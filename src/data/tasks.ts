@@ -1,3 +1,4 @@
+import { ProjectId } from '../types/project';
 import { Task, TaskId } from '../types/task';
 import { getData } from './data';
 
@@ -8,6 +9,16 @@ export const getTaskById = (id: TaskId): Task | null => {
 
 export const deleteTask = (id: TaskId) => {
   delete getData().tasks[id];
+};
+
+export const getTasksInProject = (id: ProjectId): Task[] => {
+  const tasks = [];
+  for (const task of Object.values(getData().tasks)) {
+    if (task.project === id) {
+      tasks.push(task);
+    }
+  }
+  return tasks;
 };
 
 /**

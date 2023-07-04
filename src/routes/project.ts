@@ -7,6 +7,7 @@ import { deleteProject, getProjectById, getVisibleProjects, isProjectVisibleToUs
 import { getUserIdFromRequest, getUserIdFromRequest as userFromToken } from '../util/token';
 import { body, validationResult } from 'express-validator';
 import { Request } from 'express-jwt';
+import { deleteTask, getTasksInProject } from '../data/tasks';
 
 const project = Router();
 
@@ -126,6 +127,11 @@ project.delete('/:projectId', (req, res) => {
 
   if (project.owner !== id) {
     throw HttpError(403, "You're not the owner of the project");
+  }
+
+  // Delete all tasks associated with the project
+  for (const task of getTasksInProject(projectId)) {
+    deleteTask(task.id);
   }
 
   deleteProject(projectId);

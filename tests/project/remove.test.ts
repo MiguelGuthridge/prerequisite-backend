@@ -15,7 +15,7 @@ describe('/project remove', () => {
       .rejects.toMatchObject({ code: 400 });
   });
 
-  it.failing('deletes all tasks belonging to the project', async () => {
+  it('deletes all tasks belonging to the project', async () => {
     const { token } = await makeUser();
     const { id: projectId } = await makeProject(token);
     const { id: taskId } = await makeTask(token, projectId);
