@@ -7,7 +7,7 @@ import { getProjectById, isProjectVisibleToUser } from '../data/projects';
 import { getUserIdFromRequest } from '../util/token';
 import { body, validationResult } from 'express-validator';
 import { Request } from 'express-jwt';
-import { deleteTask, getTaskById } from '../data/tasks';
+import { deleteTask, expandTaskPrerequisite, getTaskById } from '../data/tasks';
 import { TaskDeletionStrategy, TaskId } from '../types/task';
 
 const task = Router();
@@ -237,11 +237,12 @@ task.put(
           `Task with ID ${prereqId} does not belong to same project`
         );
       }
-    }
-
-    // Disallow self-dependencies
-    if (prerequisites.includes(taskId)) {
-      throw HttpError(400, 'Circular task dependencies are not allowed');
+      if (expandTaskPrerequisite(prereqId).includes(taskId)) {
+        throw HttpError(
+          400,
+          `Using task with ID ${prereqId} as a prerequisite would create a circular dependency`
+        );
+      }
     }
 
     task.prerequisites = prerequisites;

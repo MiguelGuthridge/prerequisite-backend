@@ -9,3 +9,16 @@ export const getTaskById = (id: TaskId): Task | null => {
 export const deleteTask = (id: TaskId) => {
   delete getData().tasks[id];
 };
+
+export const expandTaskPrerequisite = (id: TaskId): TaskId[] => {
+  const prerequisites = [id];
+
+  const task = getTaskById(id) as Task;
+
+  for (const prereq of task.prerequisites) {
+    prerequisites.push(prereq);
+    prerequisites.push(...expandTaskPrerequisite(prereq));
+  }
+
+  return prerequisites;
+};
