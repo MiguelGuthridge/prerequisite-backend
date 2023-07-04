@@ -121,94 +121,136 @@ task.get('/:taskId', (req, res) => {
   res.json(task);
 });
 
-// FIXME: Validate body
-task.put('/:taskId', (req, res) => {
-  const owner = getUserIdFromRequest(req);
-  const taskId = req.params.taskId as TaskId;
+task.put(
+  '/:taskId',
+  [
+    body('name')
+      .exists()
+      .escape()
+      .trim()
+      .notEmpty(),
+    body('description')
+      .exists()
+      .escape()
+      .trim(),
+  ],
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() });
+    }
+    const owner = getUserIdFromRequest(req);
+    const taskId = req.params.taskId as TaskId;
 
-  const task = getTaskById(taskId);
+    const task = getTaskById(taskId);
 
-  if (task === null) {
-    throw HttpError(400, 'Task does not exist');
-  }
+    if (task === null) {
+      throw HttpError(400, 'Task does not exist');
+    }
 
-  const project = getProjectById(task.project) as Project;
+    const project = getProjectById(task.project) as Project;
 
-  if (project.owner !== owner) {
-    throw HttpError(403, "You're not the owner of the project");
-  }
+    if (project.owner !== owner) {
+      throw HttpError(403, "You're not the owner of the project");
+    }
 
-  if (!isProjectVisibleToUser(owner, task.project)) {
-    throw HttpError(403, 'Unable to view project');
-  }
+    if (!isProjectVisibleToUser(owner, task.project)) {
+      throw HttpError(403, 'Unable to view project');
+    }
 
-  const {
-    name,
-    description,
-  } = req.body as {
+    const {
+      name,
+      description,
+    } = req.body as {
     name: string,
     description: string,
   };
 
-  task.name = name;
-  task.description = description;
+    task.name = name;
+    task.description = description;
 
-  res.json({});
-});
-
-task.post('/:taskId/complete', (req, res) => {
-  const owner = getUserIdFromRequest(req);
-  const taskId = req.params.taskId as TaskId;
-
-  const task = getTaskById(taskId);
-
-  if (task === null) {
-    throw HttpError(400, 'Task does not exist');
+    res.json({});
   }
+);
 
-  const project = getProjectById(task.project) as Project;
+task.post(
+  '/:taskId/complete',
+  [
+    body('complete')
+      .exists()
+      .isBoolean(),
+  ],
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() });
+    }
+    const owner = getUserIdFromRequest(req);
+    const taskId = req.params.taskId as TaskId;
 
-  if (project.owner !== owner) {
-    throw HttpError(403, "You're not the owner of the project");
+    const task = getTaskById(taskId);
+
+    if (task === null) {
+      throw HttpError(400, 'Task does not exist');
+    }
+
+    const project = getProjectById(task.project) as Project;
+
+    if (project.owner !== owner) {
+      throw HttpError(403, "You're not the owner of the project");
+    }
+
+    if (!isProjectVisibleToUser(owner, task.project)) {
+      throw HttpError(403, 'Unable to view project');
+    }
+
+    const { complete } = req.body as { complete: boolean };
+
+    task.complete = complete;
+
+    res.json({});
   }
+);
 
-  if (!isProjectVisibleToUser(owner, task.project)) {
-    throw HttpError(403, 'Unable to view project');
+task.put(
+  '/:taskId/prerequisites',
+  [
+    body('prerequisites')
+      .isArray(),
+    body('prerequisites.*')
+      .isUUID(),
+  ],
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() });
+    }
+    const owner = getUserIdFromRequest(req);
+    const taskId = req.params.taskId as TaskId;
+
+    const task = getTaskById(taskId);
+
+    if (task === null) {
+      throw HttpError(400, 'Task does not exist');
+    }
+
+    const project = getProjectById(task.project) as Project;
+
+    if (project.owner !== owner) {
+      throw HttpError(403, "You're not the owner of the project");
+    }
+
+    if (!isProjectVisibleToUser(owner, task.project)) {
+      throw HttpError(403, 'Unable to view project');
+    }
+
+    const { prerequisites } = req.body as { prerequisites: TaskId[] };
+
+    task.prerequisites = prerequisites;
+
+    res.json({});
   }
-
-  const { complete } = req.body as { complete: boolean };
-
-  task.complete = complete;
-
-  res.json({});
-});
-
-task.put('/:taskId/prerequisites', (req, res) => {
-  const owner = getUserIdFromRequest(req);
-  const taskId = req.params.taskId as TaskId;
-
-  const task = getTaskById(taskId);
-
-  if (task === null) {
-    throw HttpError(400, 'Task does not exist');
-  }
-
-  const project = getProjectById(task.project) as Project;
-
-  if (project.owner !== owner) {
-    throw HttpError(403, "You're not the owner of the project");
-  }
-
-  if (!isProjectVisibleToUser(owner, task.project)) {
-    throw HttpError(403, 'Unable to view project');
-  }
-
-  const { prerequisites } = req.body as { prerequisites: TaskId[] };
-
-  task.prerequisites = prerequisites;
-
-  res.json({});
-});
+);
 
 task.delete('/:taskId', (req, res) => {
   const owner = getUserIdFromRequest(req);
