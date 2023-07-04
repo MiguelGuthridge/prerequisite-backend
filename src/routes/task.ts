@@ -58,14 +58,15 @@ task.post(
     } = req.body;
 
     // Validate project
+
+    if (!isProjectVisibleToUser(owner, project)) {
+      throw HttpError(403, 'Unable to view project');
+    }
+
     const projectData = getProjectById(project);
 
     if (projectData === null) {
       throw HttpError(400, 'Project does not exist');
-    }
-
-    if (projectData.owner !== owner) {
-      throw HttpError(403, "You're not the owner of the project");
     }
 
     // Validate prerequisite tasks
@@ -108,12 +109,6 @@ task.get('/:taskId', (req, res) => {
     throw HttpError(400, 'Task does not exist');
   }
 
-  const project = getProjectById(task.project) as Project;
-
-  if (project.owner !== owner) {
-    throw HttpError(403, "You're not the owner of the project");
-  }
-
   if (!isProjectVisibleToUser(owner, task.project)) {
     throw HttpError(403, 'Unable to view project');
   }
@@ -146,12 +141,6 @@ task.put(
 
     if (task === null) {
       throw HttpError(400, 'Task does not exist');
-    }
-
-    const project = getProjectById(task.project) as Project;
-
-    if (project.owner !== owner) {
-      throw HttpError(403, "You're not the owner of the project");
     }
 
     if (!isProjectVisibleToUser(owner, task.project)) {
@@ -196,10 +185,6 @@ task.post(
 
     const project = getProjectById(task.project) as Project;
 
-    if (project.owner !== owner) {
-      throw HttpError(403, "You're not the owner of the project");
-    }
-
     if (!isProjectVisibleToUser(owner, task.project)) {
       throw HttpError(403, 'Unable to view project');
     }
@@ -234,17 +219,30 @@ task.put(
       throw HttpError(400, 'Task does not exist');
     }
 
-    const project = getProjectById(task.project) as Project;
-
-    if (project.owner !== owner) {
-      throw HttpError(403, "You're not the owner of the project");
-    }
-
     if (!isProjectVisibleToUser(owner, task.project)) {
       throw HttpError(403, 'Unable to view project');
     }
 
     const { prerequisites } = req.body as { prerequisites: TaskId[] };
+
+    // Validate prerequisite tasks
+    for (const prereqId of prerequisites) {
+      const prereq = getTaskById(prereqId);
+      if (prereq === null) {
+        throw HttpError(400, `Task with ID ${prereqId} does not exist`);
+      }
+      if (prereq.project !== task.project) {
+        throw HttpError(
+          400,
+          `Task with ID ${prereqId} does not belong to same project`
+        );
+      }
+    }
+
+    // Disallow self-dependencies
+    if (prerequisites.includes(taskId)) {
+      throw HttpError(400, 'Circular task dependencies are not allowed');
+    }
 
     task.prerequisites = prerequisites;
 
@@ -267,10 +265,6 @@ task.delete('/:taskId', (req, res) => {
 
   if (project.owner !== owner) {
     throw HttpError(403, "You're not the owner of the project");
-  }
-
-  if (!isProjectVisibleToUser(owner, task.project)) {
-    throw HttpError(403, 'Unable to view project');
   }
 
   deleteTask(taskId);
