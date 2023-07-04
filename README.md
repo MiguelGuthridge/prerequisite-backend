@@ -14,7 +14,7 @@ frontend yet). Hopefully it'll be ready to try out soon!
 
 These are the things I'm hoping to tackle, probably in this order.
 
-* [ ] Basic task management
+* [X] Basic task management
 * [ ] Basic frontend
 * [ ] Path-finding algorithm
 * [ ] Task completion interface in frontend
