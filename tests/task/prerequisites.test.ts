@@ -53,6 +53,33 @@ describe('edit task prerequisites', () => {
     );
   });
 
+  it("doesn't allow indirect circular dependencies of tasks", async () => {
+    const { token } = await makeUser();
+    const { id: projectId } = await makeProject(token);
+    const { id: taskId1 } = await makeTask(token, projectId);
+    const { id: taskId2 } = await makeTask(
+      token,
+      projectId,
+      { num: 2, prerequisites: [taskId1] },
+    );
+    // An extra layer of indirection
+    // Our backend can't just check direct prerequisites
+    const { id: taskId3 } = await makeTask(
+      token,
+      projectId,
+      { num: 3, prerequisites: [taskId2] },
+    );
+
+    // Can't make third a dependency of first
+    await expect(api.task.prerequisites(
+      token,
+      taskId1,
+      [taskId3]
+    )).rejects.toMatchObject(
+      { code: 400 }
+    );
+  });
+
   it('fails for invalid task IDs in prerequisites', async () => {
     const { token } = await makeUser();
     const { id: projectId } = await makeProject(token);
