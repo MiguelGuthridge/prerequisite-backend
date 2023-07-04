@@ -94,4 +94,18 @@ describe('/task create', () => {
       [],
     )).rejects.toMatchObject({ code: 400 });
   });
+
+  describe('prerequisite management', () => {
+    it('allows prerequisites to be defined', async () => {
+      // todo
+    });
+
+    it('fails for invalid task IDs in prerequisites', async () => {
+      // todo
+    });
+
+    it('fails for task IDs outside of the project', async () => {
+      // todo
+    });
+  });
 });
