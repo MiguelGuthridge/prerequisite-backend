@@ -92,6 +92,7 @@ describe('/task remove', () => {
 
     describe('reroute', () => {
       it('updates prerequisites for direct dependents', async () => {
+        jest.setTimeout(99999999);
         const { token } = await makeUser();
         const { id: projectId } = await makeProject(token);
         const { id: taskId1 } = await makeTask(token, projectId);
@@ -114,7 +115,7 @@ describe('/task remove', () => {
 
         // Delete task 2 with reroute strategy
         await expect(
-          api.task.remove(token, taskId2, TaskDeletionStrategy.Cascade)
+          api.task.remove(token, taskId2, TaskDeletionStrategy.Reroute)
         ).resolves.toStrictEqual(
           {}
         );

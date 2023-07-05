@@ -253,7 +253,10 @@ task.put(
           `Task with ID ${prereqId} does not belong to same project`
         );
       }
-      if (expandTaskPrerequisite(prereqId).includes(taskId)) {
+      if (
+        // FIXME: Make ESLint prefer operators at start of lines
+        expandTaskPrerequisite(prereqId).includes(taskId) || prereqId === taskId
+      ) {
         throw HttpError(
           400,
           `Using task with ID ${prereqId} as a prerequisite would create a circular dependency`

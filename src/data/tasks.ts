@@ -23,10 +23,10 @@ export const getTasksInProject = (id: ProjectId): Task[] => {
 
 /**
  * Recursively expand a prerequisite to give a list of all prerequisite tasks
- * given this task is a prerequisite (includes original task ID)
+ * given this task is a prerequisite (does not include original task ID)
  */
 export const expandTaskPrerequisite = (id: TaskId): TaskId[] => {
-  const prerequisites = [id];
+  const prerequisites = [];
 
   const task = getTaskById(id) as Task;
 
@@ -61,7 +61,7 @@ export const findAllSuccessorTasks = (id: TaskId): TaskId[] => {
     const prereqs = expandTaskPrerequisite(task.id);
     if (prereqs.includes(id)) {
       // Only include it if it isn't there already
-      if (successors.includes(task.id)) {
+      if (!successors.includes(task.id)) {
         successors.push(task.id);
       }
     }
