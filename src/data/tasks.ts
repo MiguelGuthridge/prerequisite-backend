@@ -52,3 +52,38 @@ export const findDirectSuccessorTasks = (id: TaskId): TaskId[] => {
   }
   return successors;
 };
+
+export const findAllSuccessorTasks = (id: TaskId): TaskId[] => {
+  const successors: TaskId[] = [];
+  for (const task of Object.values(getData().tasks)) {
+    // This is super inefficient - may need to design a better algorithm for
+    // this in future
+    const prereqs = expandTaskPrerequisite(task.id);
+    if (prereqs.includes(id)) {
+      // Only include it if it isn't there already
+      if (successors.includes(task.id)) {
+        successors.push(task.id);
+      }
+    }
+  }
+
+  return successors;
+};
+
+export const taskAddPrerequisite = (task: Task, prereq: TaskId): boolean => {
+  if (task.prerequisites.includes(prereq)) {
+    return false;
+  } else {
+    task.prerequisites.push(prereq);
+    return true;
+  }
+};
+
+export const taskRemovePrerequisite = (task: Task, prereq: TaskId): boolean => {
+  if (task.prerequisites.includes(prereq)) {
+    task.prerequisites = task.prerequisites.filter(p => p !== prereq);
+    return true;
+  } else {
+    return false;
+  }
+};

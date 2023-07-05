@@ -13,18 +13,18 @@ export type Task = {
 
 export enum TaskDeletionStrategy {
   /**
-   * Tasks that depend on this task are also deleted
+   * Successor tasks to the task are also deleted
    */
   Cascade = 'cascade',
 
   /**
-   * Tasks that depend on this task have their dependencies updated to require
+   * Successor tasks have their dependencies updated to require
    * the dependencies of the deleted task
    */
   Reroute = 'reroute',
 
   /**
-   * Tasks that depend on this task have this task removed from their
+   * Successor tasks have this task removed from their
    * dependencies
    */
   Trim = 'trim'

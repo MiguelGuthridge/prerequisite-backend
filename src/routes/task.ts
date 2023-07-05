@@ -7,7 +7,7 @@ import { getProjectById, isProjectVisibleToUser } from '../data/projects';
 import { getUserIdFromRequest } from '../util/token';
 import { body, validationResult } from 'express-validator';
 import { Request } from 'express-jwt';
-import { deleteTask, expandTaskPrerequisite, findDirectSuccessorTasks, getTaskById } from '../data/tasks';
+import { deleteTask, expandTaskPrerequisite, findAllSuccessorTasks, findDirectSuccessorTasks, getTaskById, taskAddPrerequisite, taskRemovePrerequisite } from '../data/tasks';
 import { Task, TaskDeletionStrategy, TaskId } from '../types/task';
 
 const task = Router();
@@ -282,6 +282,38 @@ task.delete('/:taskId', (req, res) => {
 
   if (project.owner !== owner) {
     throw HttpError(403, "You're not the owner of the project");
+  }
+
+  switch (strategy) {
+    case TaskDeletionStrategy.Cascade: {
+      // Delete all successors
+      for (const successor of findAllSuccessorTasks(taskId)) {
+        deleteTask(successor);
+      }
+      break;
+    }
+    case TaskDeletionStrategy.Reroute: {
+      // Reroute successors to depend on this task's prerequisites
+      for (const successor of findDirectSuccessorTasks(taskId)) {
+        const succTask = getTaskById(successor) as Task;
+        taskRemovePrerequisite(succTask, taskId);
+        for (const ourPrereq of task.prerequisites) {
+          taskAddPrerequisite(succTask, ourPrereq);
+        }
+      }
+      break;
+    }
+    case TaskDeletionStrategy.Trim: {
+      // Remove this task as a prerequisite
+      for (const successor of findDirectSuccessorTasks(taskId)) {
+        const succTask = getTaskById(successor) as Task;
+        taskRemovePrerequisite(succTask, taskId);
+      }
+      break;
+    }
+    default: {
+      throw HttpError(400, 'Invalid task deletion strategy');
+    }
   }
 
   deleteTask(taskId);
