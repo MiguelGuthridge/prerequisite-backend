@@ -16,6 +16,7 @@ describe('/project edit', () => {
       owner: userId,
       name: 'Edited',
       description: 'Project',
+      tasks: [],
     });
   });
 
@@ -34,6 +35,7 @@ describe('/project edit', () => {
       owner: userId,
       name: 'Proj',
       description: 'A',
+      tasks: [],
     });
   });
 

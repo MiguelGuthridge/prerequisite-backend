@@ -1,7 +1,7 @@
 import { ProjectId } from '../../src/types/project';
 import { Token } from '../../src/types/user';
 import api from '../api';
-import { makeUser } from '../helpers';
+import { makeProject, makeTask, makeUser } from '../helpers';
 
 beforeEach(api.debug.clear);
 
@@ -21,8 +21,24 @@ describe('/project/details', () => {
       name: 'My project',
       description: 'A test project',
       owner: userId,
+      tasks: [],
     });
-    // TODO: List of tasks in the project
+  });
+
+  it('contains tasks from the project', async () => {
+    const { token } = await makeUser();
+    const { id: projectId } = await makeProject(token);
+    const { id: taskId } = await makeTask(token, projectId);
+
+    const details = await api.project.details(token, projectId);
+
+    expect(details).toMatchObject({
+      tasks: [
+        expect.objectContaining({
+          id: taskId,
+        })
+      ],
+    });
   });
 
   it('fails for invalid tokens', async () => {

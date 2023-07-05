@@ -70,8 +70,10 @@ project.get('/:projectId', (req, res) => {
     throw HttpError(403, 'Unable to view project');
   }
 
-  // TODO: Show tasks associated with project
-  res.json(project);
+  res.json({
+    ...project,
+    tasks: getTasksInProject(projectId),
+  });
 });
 
 project.put(

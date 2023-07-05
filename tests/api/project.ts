@@ -1,4 +1,5 @@
 import { Project, ProjectId } from '../../src/types/project';
+import { Task } from '../../src/types/task';
 import { Token } from '../../src/types/user';
 import { apiFetch } from './fetch';
 
@@ -26,12 +27,12 @@ export const create = async (
 export const details = async (
   token: Token,
   id: ProjectId,
-): Promise<Project> => {
+): Promise<Project & { tasks: Task[] }> => {
   return apiFetch(
     'GET',
     `/project/${id}`,
     token,
-  ) as Promise<Project>;
+  ) as Promise<Project & { tasks: Task[] }>;
 };
 
 export const edit = async (
