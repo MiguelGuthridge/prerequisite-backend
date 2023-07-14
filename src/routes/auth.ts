@@ -1,5 +1,5 @@
 import { Response, Router } from 'express';
-import { getData } from '../data/data';
+import { getData, saveData } from '../data/data';
 import { getUserByUsername } from '../data/users';
 import HttpError from 'http-errors';
 import { UserId } from '../types/user';
@@ -55,6 +55,8 @@ auth.post(
       sessions: [],
     };
 
+    saveData();
+
     res.json({ id, token: generateToken(id) });
   }
 );
@@ -76,6 +78,8 @@ auth.post(
     if (u.password !== password) {
       throw HttpError(400, 'Password is incorrect');
     }
+
+    saveData();
 
     res.json({ id: u.id, token: generateToken(u.id) });
   });

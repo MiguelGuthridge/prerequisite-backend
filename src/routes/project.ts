@@ -1,5 +1,5 @@
 import { Response, Router } from 'express';
-import { getData } from '../data/data';
+import { getData, saveData } from '../data/data';
 import HttpError from 'http-errors';
 import { ProjectId } from '../types/project';
 import { v4 as uuid } from 'uuid';
@@ -46,6 +46,8 @@ project.post(
       description,
       owner,
     };
+
+    saveData();
 
     res.json({ id });
   }
@@ -113,6 +115,8 @@ project.put(
     project.name = name;
     project.description = description;
 
+    saveData();
+
     res.json({});
   }
 );
@@ -137,6 +141,8 @@ project.delete('/:projectId', (req, res) => {
   }
 
   deleteProject(projectId);
+
+  saveData();
 
   res.json({});
 });
