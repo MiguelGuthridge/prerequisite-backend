@@ -29,12 +29,17 @@ app.use(
       /\/debug\/*/,
       '/auth/register',
       '/auth/login',
+      /\/static\/*/,
     ],
   })
 );
 
 app.get('/', (req, res) => {
   res.send('Waydriver backend is up and running!');
+});
+
+app.get('/static/:filename', (req, res) => {
+  res.sendFile(req.params.filename, { root: './static' });
 });
 
 // TODO: Use environment variable to enable debug routes
