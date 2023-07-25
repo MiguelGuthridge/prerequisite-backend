@@ -55,9 +55,9 @@ auth.post(
       sessions: [],
     };
 
-    saveData();
-
     res.json({ id, token: generateToken(id) });
+
+    saveData();
   }
 );
 
@@ -79,9 +79,9 @@ auth.post(
       throw HttpError(400, 'Password is incorrect');
     }
 
-    saveData();
-
     res.json({ id: u.id, token: generateToken(u.id) });
+
+    saveData();
   });
 
 export default auth;
