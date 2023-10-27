@@ -153,9 +153,9 @@ task.put(
       name,
       description,
     } = req.body as {
-    name: string,
-    description: string,
-  };
+      name: string,
+      description: string,
+    };
 
     task.name = name;
     task.description = description;
