@@ -3,7 +3,10 @@ import { Token } from '../../src/types/user';
 import api from '../api';
 import { makeProject, makeTask, makeUser } from '../helpers';
 
-beforeEach(api.debug.clear);
+beforeEach(() => {
+  api.debug.clear();
+  api.debug.echo(expect.getState().currentTestName || 'Test not running');
+});
 
 describe('/project/details', () => {
   it('gets the details of existing projects', async () => {
