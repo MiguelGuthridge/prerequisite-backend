@@ -1,10 +1,10 @@
 import { Response, Router } from 'express';
-import { getData } from '../data/data';
+import { getData, saveData } from '../data/data';
 import HttpError from 'http-errors';
 import { ProjectId } from '../types/project';
 import { v4 as uuid } from 'uuid';
 import { deleteProject, getProjectById, getVisibleProjects, isProjectVisibleToUser } from '../data/projects';
-import { getUserIdFromRequest, getUserIdFromRequest as userFromToken } from '../util/token';
+import { getUserIdFromRequest } from '../util/token';
 import { body, validationResult } from 'express-validator';
 import { Request } from 'express-jwt';
 import { deleteTask, getTasksInProject } from '../data/tasks';
@@ -47,17 +47,19 @@ project.post(
       owner,
     };
 
+    saveData();
+
     res.json({ id });
   }
 );
 
 project.get('/', (req, res) => {
-  const id = userFromToken(req);
+  const id = getUserIdFromRequest(req);
   res.json({ projects: getVisibleProjects(id) });
 });
 
 project.get('/:projectId', (req, res) => {
-  const id = userFromToken(req);
+  const id = getUserIdFromRequest(req);
   const projectId = req.params.projectId as ProjectId;
 
   const project = getProjectById(projectId);
@@ -95,7 +97,7 @@ project.put(
       return res.status(400).json({ error: errors.array() });
     }
 
-    const id = userFromToken(req);
+    const id = getUserIdFromRequest(req);
     const projectId = req.params.projectId as ProjectId;
 
     const project = getProjectById(projectId);
@@ -113,12 +115,14 @@ project.put(
     project.name = name;
     project.description = description;
 
+    saveData();
+
     res.json({});
   }
 );
 
 project.delete('/:projectId', (req, res) => {
-  const id = userFromToken(req);
+  const id = getUserIdFromRequest(req);
   const projectId = req.params.projectId as ProjectId;
 
   const project = getProjectById(projectId);
@@ -137,6 +141,8 @@ project.delete('/:projectId', (req, res) => {
   }
 
   deleteProject(projectId);
+
+  saveData();
 
   res.json({});
 });

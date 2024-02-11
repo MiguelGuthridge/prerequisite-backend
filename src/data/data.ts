@@ -1,4 +1,7 @@
 import { DataStore } from '../types';
+import fs from 'fs';
+
+const DATABASE_LOCATION = 'database.json';
 
 /**
  * Returns the default data
@@ -12,8 +15,23 @@ export const defaultData = (): DataStore => {
   };
 };
 
+const loadData = (): DataStore => {
+  if (!fs.existsSync(DATABASE_LOCATION)) {
+    return defaultData();
+  }
+  const data = fs.readFileSync(DATABASE_LOCATION);
+  return JSON.parse(data.toString('utf-8'));
+};
+
+export const saveData = () => {
+  fs.writeFileSync(
+    DATABASE_LOCATION,
+    JSON.stringify(data)
+  );
+};
+
 /** Data store before I make it use a proper database */
-let data = defaultData();
+let data = loadData();
 
 /**
  * Get the data
@@ -29,4 +47,5 @@ export const getData = (): DataStore => {
  */
 export const setData = (newData: DataStore) => {
   data = newData;
+  saveData();
 };

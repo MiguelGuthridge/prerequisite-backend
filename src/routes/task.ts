@@ -1,5 +1,5 @@
 import { Response, Router } from 'express';
-import { getData } from '../data/data';
+import { getData, saveData } from '../data/data';
 import HttpError from 'http-errors';
 import { Project, ProjectId } from '../types/project';
 import { v4 as uuid } from 'uuid';
@@ -95,6 +95,8 @@ task.post(
       project,
     };
 
+    saveData();
+
     res.json({ id });
   }
 );
@@ -151,12 +153,14 @@ task.put(
       name,
       description,
     } = req.body as {
-    name: string,
-    description: string,
-  };
+      name: string,
+      description: string,
+    };
 
     task.name = name;
     task.description = description;
+
+    saveData();
 
     res.json({});
   }
@@ -208,6 +212,8 @@ task.post(
     }
 
     task.complete = complete;
+
+    saveData();
 
     res.json({});
   }
@@ -266,6 +272,8 @@ task.put(
 
     task.prerequisites = prerequisites;
 
+    saveData();
+
     res.json({});
   }
 );
@@ -320,6 +328,8 @@ task.delete('/:taskId', (req, res) => {
   }
 
   deleteTask(taskId);
+
+  saveData();
 
   res.json({});
 });

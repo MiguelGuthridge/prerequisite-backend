@@ -7,12 +7,19 @@ beforeEach(api.debug.clear);
 
 describe('task completion', () => {
   it('marks tasks as complete', async () => {
+    // We register a user
     const { token } = await makeUser();
+    // That user creates a project
     const { id: projectId } = await makeProject(token);
+    // Inside that project, they create a task
     const { id: taskId } = await makeTask(token, projectId);
 
+    // The user then marks the task as complete!
+    // This should give an empty object to indicate success
     await expect(api.task.complete(token, taskId, true)).resolves.toStrictEqual({});
 
+    // Let's make sure that the task is complete now - when we view its details
+    // it should say that `complete` is `true`
     await expect(api.task.details(token, taskId)).resolves.toMatchObject({
       complete: true,
     });
