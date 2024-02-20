@@ -15,6 +15,11 @@ export const getAccessTokenSecret = () => {
   return process.env.ACCESS_TOKEN_SECRET as string;
 };
 
+/**
+ * Generates a token for the given user
+ * @param id ID of user to generate token for
+ * @returns a new JWT token
+ */
 export const generateToken = (id: UserId) => {
   const sessionId = crypto.randomUUID();
   // INVESTIGATE: Do we need to hash our session IDs for storage?
@@ -30,6 +35,10 @@ export const generateToken = (id: UserId) => {
   );
 };
 
+/**
+ * Given a request, revoke the token associated with the request
+ * @param req Request object
+ */
 export const revokeToken = (req: JWTRequest) => {
   const { userId, sessionId } = req.auth as TokenData;
   const sessions = getData().users[userId].sessions;
