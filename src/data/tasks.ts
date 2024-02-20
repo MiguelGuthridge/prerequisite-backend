@@ -11,6 +11,11 @@ export const deleteTask = (id: TaskId) => {
   delete getData().tasks[id];
 };
 
+/**
+ * Given a project ID, return a list of tasks within it
+ * @param id ID of project
+ * @returns a list of tasks within this project
+ */
 export const getTasksInProject = (id: ProjectId): Task[] => {
   const tasks = [];
   for (const task of Object.values(getData().tasks)) {
@@ -53,6 +58,16 @@ export const findDirectSuccessorTasks = (id: TaskId): TaskId[] => {
   return successors;
 };
 
+/**
+ * Finds and returns an array containing all tasks that are a successor to this
+ * task.
+ *
+ * A successor task is a task that contains this task as a prerequisite, or
+ * contains a task for which this task is a successor.
+ *
+ * @param id ID of the task
+ * @returns array of task IDs that are successors to the given task
+ */
 export const findAllSuccessorTasks = (id: TaskId): TaskId[] => {
   const successors: TaskId[] = [];
   for (const task of Object.values(getData().tasks)) {
@@ -71,10 +86,10 @@ export const findAllSuccessorTasks = (id: TaskId): TaskId[] => {
 };
 
 /**
- * Add a task as a prereq to another
- * @param task task
- * @param prereq prerequisite task
- * @returns whether the task was added, or was already a prereq
+ * Add a task as a prerequisite to another task
+ * @param task task object to add prerequisite to
+ * @param prereq task ID of prerequisite task
+ * @returns whether the task was already a prerequisite
  */
 export const taskAddPrerequisite = (task: Task, prereq: TaskId): boolean => {
   if (task.prerequisites.includes(prereq)) {
