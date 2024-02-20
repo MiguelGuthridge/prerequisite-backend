@@ -70,6 +70,12 @@ export const findAllSuccessorTasks = (id: TaskId): TaskId[] => {
   return successors;
 };
 
+/**
+ * Add a task as a prereq to another
+ * @param task task
+ * @param prereq prerequisite task
+ * @returns whether the task was added, or was already a prereq
+ */
 export const taskAddPrerequisite = (task: Task, prereq: TaskId): boolean => {
   if (task.prerequisites.includes(prereq)) {
     return false;
