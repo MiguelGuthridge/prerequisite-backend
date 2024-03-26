@@ -4,9 +4,10 @@ import { getUserByUsername } from '../data/users';
 import HttpError from 'http-errors';
 import { UserId } from '../types/user';
 import { body, validationResult } from 'express-validator';
+import { Request as JWTRequest } from 'express-jwt';
 import { Request } from 'express-validator/src/base';
 import { v4 as uuid } from 'uuid';
-import { generateToken } from '../util/token';
+import { generateToken, revokeToken } from '../util/token';
 
 const auth = Router();
 
@@ -83,5 +84,13 @@ auth.post(
 
     saveData();
   });
+
+auth.post(
+  '/logout',
+  (req: JWTRequest, res: Response) => {
+    revokeToken(req);
+    res.json({});
+  }
+)
 
 export default auth;
