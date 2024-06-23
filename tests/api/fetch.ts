@@ -85,5 +85,10 @@ export async function apiFetch (
   }
 
   // Got valid data
+  // Assign it to a new object, because otherwise it'll fail to match using
+  // `.toStrictEqual`, likely due to some weirdness with Jest
+  // Seems to be similar to the issues described at these URLs
+  // https://github.com/jestjs/jest/issues/8446
+  // https://github.com/nktnet1/jewire?tab=readme-ov-file#53-rewire-and-jest
   return Object.assign({}, json);
 }
