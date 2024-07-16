@@ -20,7 +20,6 @@ describe('/project POST', () => {
     await expect(
       api.project.create('bad' as Token, 'proj', 'desc')
     ).rejects.toMatchObject({ code: 401 });
-    // TODO: Is 401 the right code here?
   });
 
   it("doesn't allow empty project names", async () => {
